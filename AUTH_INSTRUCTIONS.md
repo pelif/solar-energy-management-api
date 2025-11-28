@@ -30,7 +30,7 @@ Include the token in the `Authorization` header:
 
 **Example:**
 ```bash
-curl -H "Authorization: Bearer 1|..." http://localhost:8000/api/clients
+curl -H "Authorization: Bearer 1|..." http://localhost:8088/api/clients
 ```
 
 ## 3. Default User

@@ -1,10 +1,10 @@
 name: 'solarEnergyManagement'
-services: 
-#banco de dados
-  solar_energy_management_db: 
+services:
+  #banco de dados
+  solar_energy_management_db:
     image: mysql:5.7
     container_name: solar_energy_management_db
-    volumes: 
+    volumes:
       - mysql:/var/lib/mysql
     environment:
       - MYSQL_DATABASE=solar_energy_management
@@ -16,23 +16,23 @@ services:
       solarEnergyManagementNetwork:
         ipv4_address: 180.72.0.2
 
-#aplicação 
+  #aplicação 
   solar_energy_management_app:
     container_name: solar_energy_management_app
     build:
       context: ./
       dockerfile: Dockerfile
     working_dir: /var/www
-    ports: 
+    ports:
       - "8081:80"
-    volumes: 
+    volumes:
       - /var/www/storage
-      - ./:/var/www  
+      - ./:/var/www
     env_file: .env
-    environment: 
+    environment:
       - "DB_HOST=solar_energy_management_db"
       - "DB_PORT=3306"
-    links: 
+    links:
       - solar_energy_management_db
     depends_on:
       - solar_energy_management_db
@@ -40,24 +40,23 @@ services:
       solarEnergyManagementNetwork:
         ipv4_address: 180.72.0.3
 
-#servidor web - nginx
+  #servidor web - nginx
   solar_energy_management_nginx:
     container_name: solar_energy_management_nginx
-    build: 
+    build:
       context: ./
       dockerfile: nginx.Dockerfile
     ports:
       - "8088:80"
-    links: 
+    links:
       - solar_energy_management_app
-    volumes: 
+    volumes:
       - ./:/var/www
       - ./nginx/access.log:/var/log/nginx/access.log
       - ./nginx/error.log:/var/log/nginx/error.log
     networks:
       solarEnergyManagementNetwork:
-        ipv4_address: 180.72.0.4  
-
+        ipv4_address: 180.72.0.4
 
 networks:
   solarEnergyManagementNetwork:
@@ -66,5 +65,5 @@ networks:
       config:
         - subnet: 180.72.0.0/16
 
-volumes: 
-  mysql:         
+volumes:
+  mysql:
