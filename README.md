@@ -48,13 +48,13 @@ docker-compose up -d --build
 # 5. Rodando o comando você poderá ver os serviços representados por containers rodandoo
 docker compose ps 
 
-# 5. Acesse a aplicação
+# 6. Acesse a aplicação
 API:        http://localhost:8088
 Swagger:    http://localhost:8088/api/documentation
 
-**OBS:**
-O ambiente vai fazer um proxy reverso entre container Nginx com Container da Apicação e vai servir a API na porta 8088
-
+OBS: 
+O ambiente vai fazer um proxy reverso entre container Nginx com 
+Container da Apicação e vai servir a API na porta 8088
 
 ```
 
@@ -62,50 +62,78 @@ O ambiente vai fazer um proxy reverso entre container Nginx com Container da Api
 
 ```
 solar-energy-management-api/
-├── app/
-│   ├── Domain/                      # Camada de Domínio (Clean Architecture)
-│   │   ├── Entities/               # Entidades do negócio
-│   │   └── Repositories/           # Interfaces de repositórios
-│   │
-│   ├── Application/                # Camada de Aplicação
-│   │   ├── Services/               # Serviços e use cases
-│   │   ├── DTOs/                   # Data Transfer Objects
-│   │   └── Validators/             # Validações customizadas
-│   │
-│   ├── Infrastructure/             # Camada de Infraestrutura
-│   │   ├── Repositories/           # Implementações de repositórios
-│   │   ├── Adapters/               # Adaptadores para serviços externos
-│   │   └── Database/               # Configurações de banco de dados
-│   │
-│   ├── Presentation/               # Camada de Apresentação
-│   │   ├── Http/
-│   │   │   ├── Controllers/        # Controllers da API
-│   │   │   └── Requests/           # Form Requests (validação)
-│   │   └── Resources/              # JSON Resources (resposta formatada)
-│   │
-│   └── Models/                     # Models Eloquent (ORM)
-│
-├── tests/
-│   ├── Unit/                       # Testes unitários
-│   ├── Feature/                    # Testes de integração
-│   └── Pest.php                    # Configuração dos testes
-│
-├── database/
-│   ├── migrations/                 # Schemas do banco de dados
-│   ├── seeders/                    # Dados iniciais
-│   └── factories/                  # Factories para testes
-│
-├── routes/
-│   └── api.php                     # Rotas da API
-│
-├── config/
-│   └── swagger.php                 # Configuração do Swagger
-│
-├── docker-compose.yml              # Orquestração de containers
-├── Dockerfile                      # Imagem Docker do Laravel
-├── .env.example                    # Variáveis de exemplo
-├── composer.json                   # Dependências PHP
-└── phpunit.xml                     # Configuração de testes
+app/
+├── Core
+│   ├── Domain
+│   │   ├── Client
+│   │   │   ├── Entities
+│   │   │   │   └── Client.php
+│   │   │   ├── Repositories
+│   │   │   │   └── ClientRepositoryInterface.php
+│   │   │   └── ValueObjects
+│   │   │       └── CpfCnpj.php
+│   │   ├── Project
+│   │   │   ├── Entities
+│   │   │   │   └── Project.php
+│   │   │   ├── Enums
+│   │   │   │   ├── EquipmentType.php
+│   │   │   │   ├── InstallationType.php
+│   │   │   │   └── UF.php
+│   │   │   ├── Repositories
+│   │   │   │   └── ProjectRepositoryInterface.php
+│   │   │   └── ValueObjects
+│   │   │       └── Equipment.php
+│   │   └── RepositoryInterface.php
+│   ├── Infrastructure
+│   │   └── Persistence
+│   │       └── Eloquent
+│   │           ├── Client
+│   │           │   └── EloquentClientRepository.php
+│   │           └── Project
+│   │               └── EloquentProjectRepository.php
+│   └── UseCase
+│       ├── Client
+│       │   ├── CreateClientUseCase.php
+│       │   ├── DeleteClientUseCase.php
+│       │   ├── DTO
+│       │   │   ├── ClientInputDto.php
+│       │   │   └── ClientOutputDto.php
+│       │   ├── GetClientUseCase.php
+│       │   ├── ListClientsUseCase.php
+│       │   └── UpdateClientUseCase.php
+│       ├── Project
+│       │   ├── CreateProjectUseCase.php
+│       │   ├── DeleteProjectUseCase.php
+│       │   ├── DTO
+│       │   │   ├── EquipmentDto.php
+│       │   │   ├── ProjectInputDto.php
+│       │   │   └── ProjectOutputDto.php
+│       │   ├── GetProjectUseCase.php
+│       │   ├── ListProjectsUseCase.php
+│       │   └── UpdateProjectUseCase.php
+│       └── UseCaseInterface.php
+├── Http
+│   ├── Controllers
+│   │   ├── Api
+│   │   │   ├── AuthController.php
+│   │   │   ├── ClientController.php
+│   │   │   ├── EquipmentTypeController.php
+│   │   │   ├── InstallationTypeController.php
+│   │   │   └── ProjectController.php
+│   │   └── Controller.php
+│   └── Requests
+│       ├── StoreClientRequest.php
+│       ├── StoreProjectRequest.php
+│       ├── UpdateClientRequest.php
+│       └── UpdateProjectRequest.php
+├── Models
+│   ├── Client.php
+│   ├── ProjectEquipment.php
+│   ├── Project.php
+│   └── User.php
+└── Providers
+    ├── AppServiceProvider.php
+    └── RepositoryServiceProvider.php
 ```
 
 ## 🧪 Testes Unitários
@@ -127,6 +155,7 @@ php artisan test tests/Unit
 php artisan test tests/Feature
 
 ```
+
 
 ### Cobertura Esperada
 - ✅ Services e Use Cases (Application layer)
@@ -217,53 +246,27 @@ Importante salientar que por ser um projeto de teste e pequeno não faz muito se
 - ✅ Quantidades por projeto
 - ✅ CRUD de categorias
 
-### CI/CD no projeto com GIthubActions - Ao fazer um push para a branch main o GitHub Actions builda o ambiente docker para validar consistÊncia do mesmo e executa os testes unitários e de integração para validar a consistência do código
-- ✅ Build de ambiente no GitHub Actions
-- ✅ Testes Automatizados no GitHub Actions
-
 **Observação:**     
 No repositório GitHub, você pode encontrar o arquivo .github/workflows/main.yml que contém a configuração do GitHub Actions.
 
 ## 📦 Tecnologias Utilizadas
 
 - **Laravel 12.0** - Framework PHP
-- **PHP 8.2+** - Linguagem
+- **PHP 8.3+** - Linguagem
+- **Laravel Sanctum** - Autenticação
+- **Nginx** - Servidor Web
 - **MySQL 5.7** - Banco de dados
-- **Docker** - Containerização
+- **Docker & Docker Compose** - Containerização
 - **Swagger/OpenAPI** - Documentação
 - **PHPUnit** - Testes unitários
 - **Composer** - Gerenciador de dependências
+- **Git** - Controle de versão
 
 ## 🔐 Autenticação & Autorização
 
 Por enquanto, a API é aberta para todos os endpoints. Para produção, considere implementar:
 
 - [ ] Laravel Sanctum (autenticação por token)
-- [ ] Roles e Permissions
-- [ ] Rate limiting
-- [ ] CORS configurado
-
-## 📝 Commits e Versionamento
-
-Este projeto segue **Conventional Commits**:
-
-```
-feat:    Novo recurso
-fix:     Correção de bug
-docs:    Documentação
-test:    Testes
-refactor: Refatoração
-chore:   Tarefas auxiliares
-```
-
-Exemplo:
-```bash
-git commit -m "feat: adicionar validação de CPF em Cliente"
-git commit -m "fix: corrigir retorno de equipamentos em projeto"
-git commit -m "test: adicionar testes para ClienteService"
-```
-
-## 🐛 Troubleshooting
 
 ### Docker não inicia
 ```bash
