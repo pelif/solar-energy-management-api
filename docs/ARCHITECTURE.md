@@ -9,22 +9,22 @@ Este projeto implementa **Clean Architecture** conforme proposto por Robert C. M
 ```
                 ┌─────────────────────────────────────┐
                 │   PRESENTATION LAYER                │
-                │  (Controllers, HTTP)     │
+                │  (Controllers, HTTP)                │
                 └──────────────┬──────────────────────┘
                                │
                 ┌──────────────▼──────────────────────┐
                 │  APPLICATION LAYER                  │
-                │ (DTOs)        │
+                │ (DTOs)                              │
                 └──────────────┬──────────────────────┘
                                │
                 ┌──────────────▼──────────────────────┐
                 │   DOMAIN LAYER                      │
-                │ (Entities, Interfaces)       │
+                │ (Entities, Interfaces)              │
                 └──────────────┬──────────────────────┘
                                │
                 ┌──────────────▼──────────────────────┐
                 │ INFRASTRUCTURE LAYER                │
-                │ (Database, Repositories)      │
+                │ (Database, Repositories)            │
                 └─────────────────────────────────────┘
 ```
 
